@@ -1,0 +1,44 @@
+services:
+  db:
+    image: postgres:14
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: webhanko_development
+    volumes:
+      - db:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ./backend/
+      dockerfile: Dockerfile
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./backend:/myapp
+      - bundle:/usr/local/bundle
+    command: bash -c "rm -rf tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
+    depends_on:
+      - db
+    ports:
+      - "3001:3000"
+    environment:
+      TZ: Asia/Tokyo
+
+  frontend:
+    build:
+      context: ./frontend/
+      dockerfile: Dockerfile
+    volumes:
+      - ./frontend:/usr/src/app
+    command: sh -c "cd app && npm start"
+    ports:
+      - "3000:3000"
+
+volumes:
+  db:
+    driver: local
+  bundle:
+    driver: local
