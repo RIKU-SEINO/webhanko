@@ -11,18 +11,23 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
-      devise_scope :user do
-        post 'auth/signup', to: 'auth/registrations#create'
-        post 'auth/login', to: 'auth/sessions#create'
-        delete 'auth/logout', to: 'auth/sessions#destroy'
-        post 'auth/password-reset', to: 'auth/passwords#create'
-        put 'auth/password-reset', to: 'auth/passwords#update'
-        get 'auth/verify-email', to: 'auth/email_verifications#show'
+      devise_for :users, controllers: {
+        registrations: "api/v1/auth/registrations",
+        sessions: "api/v1/auth/sessions",
+        passwords: "api/v1/auth/passwords",
+      }, path: 'auth'
+
+      resources :users
+
+      resources :stamps_downloads, only: :create
+
+      resources :stamps_downloads, only: :index do
+        collection do
+          get 'users/:id', to: 'stamps_downloads#user_index'
+        end
       end
 
-      get 'users/me', to: 'users#me'
-      put 'users/me', to: 'users#update'
-      delete 'users/me', to: 'users#destroy'
+      get '/stamps/preview', to: 'stamps#preview'
     end
   end
 end
