@@ -4,4 +4,14 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable,
          :jwt_authenticatable, jwt_revocation_strategy: JwtDenylist
+
+  has_many :stamp_downloads
+
+  validates :email, presence: true, uniqueness: true
+  validates :encrypted_password, presence: true
+  validates :is_admin, inclusion: { in: [true, false] }
+
+  def admin?
+    is_admin
+  end
 end
