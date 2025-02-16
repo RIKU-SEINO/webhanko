@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :jwt_denylist do
-    jti { "MyString" }
-    exp { "2025-02-13 20:29:45" }
+    jti { SecureRandom.uuid }
+    exp { 1.day.from_now }
   end
 end
