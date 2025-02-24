@@ -16,6 +16,8 @@ FactoryBot.define do
 
     is_advanced { false }
 
+    balance { %w[large medium small].sample }
+
     association :user
 
     trait :advanced do
