@@ -33,6 +33,11 @@ RSpec.describe StampDownload, type: :model do
       expect(stamp_download).to_not be_valid
     end
 
+    it 'is not valid without a balance' do
+      stamp_download.balance = nil
+      expect(stamp_download).to_not be_valid
+    end
+
     it 'is valid without text' do
       stamp_download.text_1 = nil
       expect(stamp_download).to be_valid

@@ -191,4 +191,6 @@ Rails.application.config.stamp_options = {
 			},
  	  },
   },
+
+	balance: %w[large medium small],
 }

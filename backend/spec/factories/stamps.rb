@@ -1,5 +1,5 @@
 FactoryBot.define do
-  factory :stamp_download do
+  factory :stamp do
     stamp_options = Rails.application.config.stamp_options
 
     stamp_category { stamp_options[:stamp_categories].keys.sample }
@@ -18,14 +18,8 @@ FactoryBot.define do
 
     balance { %w[large medium small].sample }
 
-    association :user
-
     trait :advanced do
       is_advanced { true }
-    end
-
-    trait :with_no_user do
-      association :user, factory: :user, strategy: :null
     end
   end
 end
