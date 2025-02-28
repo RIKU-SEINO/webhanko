@@ -1,12 +1,12 @@
 Rails.application.config.stamp_options = {
 
-  stamp_categories: {
+  stamp_category: {
     personal: '個人印鑑',
     company: '法人印鑑',
     date: '日付印鑑',
   },
 
-  stamp_types: {
+  stamp_type: {
 	  personal: {
 		  official: '実印',
 		  approval: '認印',
@@ -22,7 +22,7 @@ Rails.application.config.stamp_options = {
 	  },
   },
 
-  engraving_types: {
+  engraving_type: {
 	  personal: {
 		  official: {
 			  one_row: '横1列左読み',
@@ -72,7 +72,7 @@ Rails.application.config.stamp_options = {
  	  },
   },
 
-  engraving_text_titles: {
+  engraving_text_title: {
 	  personal: {
 		  official: {
 			  one_row: ['彫刻名'],
@@ -122,7 +122,7 @@ Rails.application.config.stamp_options = {
  	  },
   },
 
-	fonts: {
+	font: {
 	  personal: {
 		  official: {
 			  insotai: '印相体',
@@ -141,7 +141,17 @@ Rails.application.config.stamp_options = {
 			  kaishotai: '楷書体',
 		  },
 		  shachihata: {
-			  no_option: 'オプション無し',
+				insotai: '印相体',
+				tenshotai: '篆書体',
+			  kointai: '古印体',
+			  reishotai: '隷書体',
+			  gyoushotai: '行書体',
+			  kaishotai: '楷書体',
+			  minchotai: '明朝体',
+			  square_gothic: '角ゴシック体',
+			  circle_gothic: '丸ゴシック体',
+			  bold_mincho: '太明朝体',
+			  soushotai: '草書体',
 		  },
 	  },
 	  company: {
@@ -192,5 +202,9 @@ Rails.application.config.stamp_options = {
  	  },
   },
 
-	balance: %w[large medium small],
+	balance: {
+		large: '大',
+		medium: '中',
+		small: '小',
+	},
 }
