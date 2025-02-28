@@ -28,6 +28,7 @@ Rails.application.routes.draw do
       end
 
       get '/stamps/preview', to: 'stamps#preview'
+      get '/stamps/translate', to: 'stamps#translate'
     end
   end
 end

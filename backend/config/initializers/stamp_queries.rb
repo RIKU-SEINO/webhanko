@@ -19,7 +19,15 @@ Rails.application.config.stamp_queries = {
 				kaishotai: '5',
 			},
 			shachihata: {
-				no_option: '16',
+				minchotai: '10',
+				square_gothic: '12',
+				circle_gothic: '14',
+				kaishotai: '16',
+				gyoushotai: '17',
+				kointai: '18',
+				reishotai: '19',
+				tenshotai: '22',
+				insotai: '13',
 			},
 		},
 		company: {
@@ -300,14 +308,14 @@ Rails.application.config.stamp_queries = {
 				no_circle_two_rows: '',
 			},
 			square: {
-				row: '0',
-				one_row: '0',
-				two_rows: '0',
-				three_rows: '0',
-				col: '1',
-				one_col: '1',
-				two_cols: '1',
-				three_cols: '1',
+				row: '1',
+				one_row: '1',
+				two_rows: '1',
+				three_rows: '1',
+				col: '0',
+				one_col: '0',
+				two_cols: '0',
+				three_cols: '0',
 			},
 		},
 		date: {
@@ -372,6 +380,56 @@ Rails.application.config.stamp_queries = {
 			},
 			square: {
 				no_option: ['line1String', 'dateSample', 'line3String'],
+			},
+		},
+	},
+
+	margin: {
+		personal: {
+			official: {
+				one_row: '',
+				one_row_old: '',
+				two_rows: '',
+				one_col: '',
+				two_cols: '',
+			},
+			approval: {
+				one_row: '',
+				one_row_old: '',
+				two_rows: '',
+				one_col: '',
+				two_cols: '',
+			},
+			shachihata: {
+				no_option: '',
+			}
+		},
+		company: {
+			representative: {
+				circle_center: '',
+				circle_center_one_row: '',
+				circle_center_two_rows: '',
+				no_circle: '',
+				no_circle_one_row: '',
+				no_circle_two_rows: '',
+			},
+			square: {
+				row: '',
+				one_row: '',
+				two_rows: '',
+				three_rows: '',
+				col: '',
+				one_col: '',
+				two_cols: '',
+				three_cols: '',
+			},
+		},
+		date: {
+			circle: {
+				no_option: '20',
+			},
+			square: {
+				no_option: '',
 			},
 		},
 	},
