@@ -13,7 +13,7 @@ class Stamp
   DATE_SAMPLE_HEIGHT = 0.12.freeze
   DATE_SAMPLE_WIDTH = 0.62.freeze
   LINE_LAYOUT = 'center'.freeze
-  MARGIN = 20.freeze
+  RADIUS = 8.freeze
 
   attribute :stamp_category, :string
   attribute :stamp_type, :string
@@ -63,6 +63,7 @@ class Stamp
       font: fetch_query(:font),
       frameWidth: fetch_query(:frame_width),
       balance: fetch_query(:balance),
+      margin: fetch_query(:margin),
       stampSize: STAMP_SIZE,
       dot: DOT,
       rotateChar: ROTATE_CHAR,
@@ -74,7 +75,7 @@ class Stamp
       line2Layout: LINE_LAYOUT,
       line3Layout: LINE_LAYOUT,
       line4Layout: LINE_LAYOUT,
-      margin: MARGIN,
+      radius: RADIUS,
     }
 
     text_keys = fetch_query(:text_keys)
