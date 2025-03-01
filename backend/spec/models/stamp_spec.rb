@@ -84,4 +84,69 @@ RSpec.describe Stamp, type: :model do
       end
     end
   end
+
+  describe '#metadata' do
+    let(:stamp) { FactoryBot.build(:stamp) }
+
+    before do
+      allow(stamp).to receive(:resolve_stamp_option_value).with(:engraving_text_title, stamp.stamp_category.to_sym, stamp.stamp_type.to_sym, stamp.engraving_type.to_sym).and_return(['彫刻名'])
+      allow(stamp).to receive(:resolve_stamp_option_hash).with(:stamp_category, stamp.stamp_category.to_sym).and_return({ personal: '個人印鑑' })
+      allow(stamp).to receive(:resolve_stamp_option_hash).with(:stamp_type, stamp.stamp_category.to_sym, stamp.stamp_type.to_sym).and_return({ official: '実印' })
+      allow(stamp).to receive(:resolve_stamp_option_hash).with(:engraving_type, stamp.stamp_category.to_sym, stamp.stamp_type.to_sym, stamp.engraving_type.to_sym).and_return({ one_row: '横1列左読み' })
+      allow(stamp).to receive(:resolve_stamp_option_hash).with(:font, stamp.stamp_category.to_sym, stamp.stamp_type.to_sym, stamp.font.to_sym).and_return({ insotai: '印相体' })
+      allow(stamp).to receive(:resolve_stamp_option_hash).with(:balance, stamp.balance.to_sym).and_return({ large: '大' })
+      allow(stamp).to receive(:resolve_stamp_option_value).with(:engraving_type, stamp.stamp_category.to_sym, stamp.stamp_type.to_sym).and_return({
+        one_row: '横1列左読み',
+        one_row_old: '横1列右読み',
+        two_rows: '横2列',
+        one_col: '縦1列',
+        two_cols: '縦2列',
+      })
+      allow(stamp).to receive(:resolve_stamp_option_value).with(:font, stamp.stamp_category.to_sym, stamp.stamp_type.to_sym).and_return({
+			  insotai: '印相体',
+				tenshotai: '篆書体',
+			  kointai: '古印体',
+			  reishotai: '隷書体',
+			  gyoushotai: '行書体',
+			  kaishotai: '楷書体',
+      })
+      allow(stamp).to receive(:resolve_stamp_option_value).with(:balance).and_return({
+        large: '大',
+        medium: '中',
+        small: '小',
+      })
+    end
+
+    it 'returns metadata' do
+      expect(stamp.metadata).to eq({
+        stamp_category: { personal: '個人印鑑' },
+        stamp_type: { official: '実印' },
+        engraving_type: { one_row: '横1列左読み' },
+        font: { insotai: '印相体' },
+        text: { '彫刻名' => stamp.text_1 },
+        is_advanced: stamp.is_advanced,
+        balance: { large: '大' },
+        engraving_type_candidates: {
+          one_row: '横1列左読み',
+          one_row_old: '横1列右読み',
+          two_rows: '横2列',
+          one_col: '縦1列',
+          two_cols: '縦2列',
+        },
+        font_candidates: {
+          insotai: '印相体',
+          tenshotai: '篆書体',
+          kointai: '古印体',
+          reishotai: '隷書体',
+          gyoushotai: '行書体',
+          kaishotai: '楷書体',
+        },
+        balance_candidates: {
+          large: '大',
+          medium: '中',
+          small: '小',
+        },
+      })
+    end
+  end
 end

@@ -28,7 +28,7 @@ Rails.application.routes.draw do
       end
 
       get '/stamps/preview', to: 'stamps#preview'
-      get '/stamps/translate', to: 'stamps#translate'
+      get '/stamps/metadata', to: 'stamps#metadata'
     end
   end
 end
