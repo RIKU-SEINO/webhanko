@@ -45,6 +45,27 @@ class Stamp
     remove_white_background(image)
   end
 
+  def metadata
+    titles = resolve_stamp_option_value(:engraving_text_title, stamp_category.to_sym, stamp_type.to_sym, engraving_type.to_sym)
+    text = {}
+    titles.each_with_index do |title, i|
+      text[title] = send("text_#{i + 1}")
+    end
+
+    {
+      stamp_category: resolve_stamp_option_hash(:stamp_category, stamp_category.to_sym),
+      stamp_type: resolve_stamp_option_hash(:stamp_type, stamp_category.to_sym, stamp_type.to_sym),
+      engraving_type: resolve_stamp_option_hash(:engraving_type, stamp_category.to_sym, stamp_type.to_sym, engraving_type.to_sym),
+      font: resolve_stamp_option_hash(:font, stamp_category.to_sym, stamp_type.to_sym, font.to_sym),
+      text: text,
+      is_advanced: is_advanced,
+      balance: resolve_stamp_option_hash(:balance, balance.to_sym),
+      engraving_type_candidates: resolve_stamp_option_value(:engraving_type, stamp_category.to_sym, stamp_type.to_sym),
+      font_candidates: resolve_stamp_option_value(:font, stamp_category.to_sym, stamp_type.to_sym),
+      balance_candidates: resolve_stamp_option_value(:balance),
+    }
+  end
+
   private
 
   def build_image_url
@@ -92,9 +113,29 @@ class Stamp
     query
   end
 
-  def fetch_query(property)
-    stamp_queries = Rails.application.config.stamp_queries
+  def stamp_options
+    Rails.application.config.stamp_options
+  end
 
+  def resolve_stamp_option_hash(*keys)
+    value = stamp_options.dig(*keys)
+    return {} unless value.present?
+
+    { keys.last => value }
+  end
+
+  def resolve_stamp_option_value(*keys)
+    value = stamp_options.dig(*keys)
+    return {} unless value.present?
+
+    value
+  end
+
+  def stamp_queries
+    Rails.application.config.stamp_queries
+  end
+
+  def fetch_query(property)
     case property
     when :balance
       stamp_queries.dig(property, balance.to_sym)

@@ -1,5 +1,5 @@
 import { apiClient } from '../lib/apiClient';
-import { StampPreviewResponse, StampPreview } from '../types/StampPreview';
+import { StampPreviewResponse, StampMetadataResponse, StampPreview } from '../types/StampPreview';
 import { StampProps } from '../types/Stamp';
 
 export const useStampPreview = () => {
@@ -10,7 +10,7 @@ export const useStampPreview = () => {
         responseType: 'blob',
       });
 
-      const responseMetadata = await apiClient.get('/stamps/translate', {
+      const responseMetadata = await apiClient.get<StampMetadataResponse>('/stamps/metadata', {
         params,
         responseType: 'json',
       });
@@ -18,21 +18,22 @@ export const useStampPreview = () => {
       return {
         blob: responseImage.data,
         status: true,
-        stamp_category: responseMetadata.data.stamp_category,
-        stamp_type: responseMetadata.data.stamp_type,
-        engraving_type: responseMetadata.data.engraving_type,
-        font: responseMetadata.data.font,
-        balance: responseMetadata.data.balance,
+        ...responseMetadata.data,
       }
     } catch (error) {
       return {
         blob: new Blob([]),
         status: false,
-        stamp_category: '',
-        stamp_type: '',
-        engraving_type: '',
-        font: '',
-        balance: '',
+        stamp_category: {},
+        stamp_type: {},
+        engraving_type: {},
+        font: {},
+        text: {},
+        is_advanced: 'false',
+        balance: {},
+        engraving_type_candidates: {},
+        font_candidates: {},
+        balance_candidates: {},
       }
     };
   };

@@ -1,16 +1,20 @@
 import React from 'react';
 import { Box, CircularProgress } from '@mui/material';
 
-const LoadingStampCard: React.FC = () => {
+interface LoadingProps {
+  width: number | null;
+  height: number | null;
+}
+
+const Loading: React.FC<LoadingProps> = ({ width, height }) => {
   return (
     <Box
       sx={{
-        width: 200,
-        height: 348,
+        width: width,
+        height: height,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: 'rgba(255, 255, 255, 0.7)',
       }}
     >
       <CircularProgress />
@@ -18,4 +22,4 @@ const LoadingStampCard: React.FC = () => {
   );
 };
 
-export default LoadingStampCard;
+export default Loading;
