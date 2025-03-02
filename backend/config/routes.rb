@@ -19,11 +19,11 @@ Rails.application.routes.draw do
 
       resources :users
 
-      resources :stamps_downloads, only: :create
+      resources :stamp_downloads, only: :create
 
-      resources :stamps_downloads, only: :index do
+      resources :stamp_downloads, only: :index do
         collection do
-          get 'users/:id', to: 'stamps_downloads#user_index'
+          get 'users/:id', to: 'stamp_downloads#user_index'
         end
       end
 

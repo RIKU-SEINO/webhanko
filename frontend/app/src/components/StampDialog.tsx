@@ -3,6 +3,7 @@ import { Dialog, DialogActions, DialogContent, DialogTitle, Button, Typography, 
 import CloseIcon from '@mui/icons-material/Close';
 import { StampProps } from '../types/Stamp';
 import { useStampPreview } from '../hooks/useStampPreview';
+import { useCreateStampDownload } from '../hooks/useCreateStampDownload';
 import Loading from './Loading';
 
 interface StampDialogProps {
@@ -13,6 +14,7 @@ interface StampDialogProps {
 
 const StampDialog: React.FC<StampDialogProps> = ({ open, onClose, props }) => {
   const { fetchStampPreview } = useStampPreview();
+  const { statusDownload, errorMessageDownload, createStampDownload } = useCreateStampDownload();
   const [imageURL, setImageURL] = useState<string>('');
   const [stampCategory, setStampCategory] = useState<string>('');
   const [stampType, setStampType] = useState<string>('');
@@ -136,28 +138,37 @@ const StampDialog: React.FC<StampDialogProps> = ({ open, onClose, props }) => {
   }
   , [engravingType]);
 
-  const handleDownload = async (isAdvanced: boolean) => {
+  const handleDownload = async (isAdvanced: string) => {
     if (isAdvanced) {
       setIsLoadingAdvancedImageFile(true);
     } else {
       setIsLoadingImageFile(true);
     }
 
+    const newProps = {
+      ...props,
+      text_1: Object.values(text)[0] || '',
+      text_2: Object.values(text)[1] || '',
+      text_3: Object.values(text)[2] || '',
+      engraving_type: Object.keys(engravingType)[0] || props.engraving_type,
+      font: Object.keys(font)[0] || props.font,
+      is_advanced: isAdvanced,
+    };
+
+    await createStampDownload(newProps)
+    
+    if (statusDownload == 'error') {
+      alert(errorMessageDownload)
+      return;
+    };
+
     const a = document.createElement('a');
     a.download = `${stampCategory}_${stampType}_${new Date().toISOString()}.png`;
     a.href = imageURL;
 
-    if (isAdvanced) {
+    if (isAdvanced == 'true') {
       try {
-        const preview = await fetchStampPreview({
-          ...props,
-          text_1: Object.values(text)[0] || '',
-          text_2: Object.values(text)[1] || '',
-          text_3: Object.values(text)[2] || '',
-          engraving_type: Object.keys(engravingType)[0] || props.engraving_type,
-          font: Object.keys(font)[0] || props.font,
-          is_advanced: 'true',
-        });
+        const preview = await fetchStampPreview(newProps);
         const blob = preview.blob;
         a.href = URL.createObjectURL(blob);
       } catch (error) {
@@ -282,7 +293,7 @@ const StampDialog: React.FC<StampDialogProps> = ({ open, onClose, props }) => {
           sx={{ marginRight: 2, width: 210, height: 45 }}
           variant="contained"
           color="inherit"
-          onClick={() => handleDownload(false)}
+          onClick={() => handleDownload('false')}
         >
           {isLoadingImageFile ? (
             <Loading
@@ -297,7 +308,7 @@ const StampDialog: React.FC<StampDialogProps> = ({ open, onClose, props }) => {
           sx={{ marginRight: 2, width: 210, height: 45 }}
           variant="contained"
           color="inherit"
-          onClick={() => handleDownload(true)}
+          onClick={() => handleDownload('true')}
         >
           {isLoadingAdvancedImageFile ? (
             <Loading
