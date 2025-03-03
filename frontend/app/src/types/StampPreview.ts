@@ -18,4 +18,5 @@ export type StampMetadataResponse = {
 export interface StampPreview extends StampMetadataResponse {
   blob: StampPreviewResponse;
   status: boolean;
+  errors?: string;
 }

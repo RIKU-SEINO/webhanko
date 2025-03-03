@@ -20,7 +20,7 @@ export const useStampPreview = () => {
         status: true,
         ...responseMetadata.data,
       }
-    } catch (error) {
+    } catch (error: any) {
       return {
         blob: new Blob([]),
         status: false,
@@ -34,6 +34,7 @@ export const useStampPreview = () => {
         engraving_type_candidates: {},
         font_candidates: {},
         balance_candidates: {},
+        errors: error.message,
       }
     };
   };
