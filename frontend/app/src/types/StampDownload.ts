@@ -4,7 +4,7 @@ import { StampProps } from './Stamp';
 export interface StampDownloadButtonProps extends StampProps {
   width: number; // ボタンの幅
   height: number; // ボタンの高さ
-  text: string; // ボタンのテキスト
+  buttonText: string; // ボタンのテキスト
 };
 
 // 印鑑ダウンロードの状態

@@ -11,7 +11,7 @@ import { useExecuteStampDownload } from '../hooks/useExecuteStampDownload';
 import { Button, Typography } from '@mui/material';
 import Loading from './Loading';
 
-const StampDownloadButton: React.FC<StampDownloadButtonProps> = ({ text, width, height, ...props }) => {
+const StampDownloadButton: React.FC<StampDownloadButtonProps> = ({ buttonText, width, height, ...props }) => {
   const { createStampDownloadStatus, errorMessageCreateStampDownload, createStampDownload } = useCreateStampDownload();
   const { executeStampDownloadStatus, errorMessageExecuteStampDownload, executeStampDownload } = useExecuteStampDownload();
   
@@ -83,7 +83,7 @@ const StampDownloadButton: React.FC<StampDownloadButtonProps> = ({ text, width, 
         height={height}
       />
     ) : (
-      <Typography>{text}</Typography>
+      <Typography>{buttonText}</Typography>
     )}
   </Button>
   );
