@@ -20,7 +20,11 @@ export type CreateStampDownloadProps = StampProps;
 export type CreateStampDownloadStatus = 'initial' | 'loading' | 'success' | 'error';
 
 // 印鑑ダウンロード履歴を取得するバックエンドAPIのリクエスト
-export type CreateStampDownloadRequest = StampProps;
+export interface CreateStampDownloadRequest extends StampProps {
+  text_1: string;
+  text_2: string;
+  text_3: string;
+}
 
 // 印鑑ダウンロード履歴を取得するバックエンドAPIのレスポンス
 export type CreateStampDownloadResponse = { 

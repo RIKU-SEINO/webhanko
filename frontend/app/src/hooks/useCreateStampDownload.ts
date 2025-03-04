@@ -9,7 +9,12 @@ export const useCreateStampDownload = () => {
   const createStampDownload = async (params: CreateStampDownloadProps) => {
     try {
       setCreateStampDownloadStatus('loading');
-      const requestPayload: CreateStampDownloadRequest = params;
+      const requestPayload: CreateStampDownloadRequest = {
+        ...params,
+        text_1: params.text[0] || '',
+        text_2: params.text[1] || '',
+        text_3: params.text[2] || '',
+      }
 
       const response = await apiClient.post<CreateStampDownloadResponse>(
         '/stamp_downloads',
