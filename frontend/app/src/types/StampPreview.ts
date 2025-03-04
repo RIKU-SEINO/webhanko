@@ -1,6 +1,20 @@
-export type StampPreviewResponse = Blob;
+import { StampProps } from './Stamp';
 
 export type JsonObject = { [key: string]: string };
+
+export interface StampPreviewRequest extends StampProps {
+  text_1: string;
+  text_2: string;
+  text_3: string;
+}
+
+export type StampPreviewResponse = Blob;
+
+export interface StampMetadataRequest extends StampProps {
+  text_1: string;
+  text_2: string;
+  text_3: string;
+}
 
 export type StampMetadataResponse = {
   stamp_category: JsonObject;
@@ -18,4 +32,5 @@ export type StampMetadataResponse = {
 export interface StampPreview extends StampMetadataResponse {
   blob: StampPreviewResponse;
   status: boolean;
+  errors?: string;
 }

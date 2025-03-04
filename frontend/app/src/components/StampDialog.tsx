@@ -3,186 +3,69 @@ import { Dialog, DialogActions, DialogContent, DialogTitle, Button, Typography, 
 import CloseIcon from '@mui/icons-material/Close';
 import { StampProps } from '../types/Stamp';
 import { useStampPreview } from '../hooks/useStampPreview';
-import { useCreateStampDownload } from '../hooks/useCreateStampDownload';
 import Loading from './Loading';
+import StampDownloadButton from './StampDownloadButton';
+import { StampDialogProps, StampDialogState } from '../types/StampDialog';
 
-interface StampDialogProps {
-  open: boolean;
-  onClose: () => void;
-  props: StampProps;
-}
-
-const StampDialog: React.FC<StampDialogProps> = ({ open, onClose, props }) => {
+const StampDialog: React.FC<StampDialogProps> = ({ open, onClose, props, state, imageUrl }) => {
   const { fetchStampPreview } = useStampPreview();
-  const { statusDownload, errorMessageDownload, createStampDownload } = useCreateStampDownload();
-  const [imageURL, setImageURL] = useState<string>('');
-  const [stampCategory, setStampCategory] = useState<string>('');
-  const [stampType, setStampType] = useState<string>('');
-  const [engravingType, setEngravingType] = useState<{ [key: string]: string }>({});
-  const [font, setFont] = useState<{ [key: string]: string }>({});
-  const [text, setText] = useState<{ [key: string]: string }>({});
+  const [imageURL, setImageURL] = useState<string>(imageUrl);
+  const [stampProps, setStampProps] = useState<StampProps>(props);
+  const [stampDialogState, setStampDialogState] = useState<StampDialogState>(state);
   const [isLoadingPreview, setIsLoadingPreview] = useState<boolean>(false);
-  const [isLoadingEngravingTypes, setIsLoadingEngravingTypes] = useState<boolean>(false);
-  const [isLoadingFonts, setIsLoadingFonts] = useState<boolean>(false);
-  const [isLoadingText, setIsLoadingText] = useState<boolean>(false);
-  const [isLoadingImageFile, setIsLoadingImageFile] = useState<boolean>(false);
-  const [isLoadingAdvancedImageFile, setIsLoadingAdvancedImageFile] = useState<boolean>(false);
-  
-  const [engravingTypes, setEngravingTypes] = useState<{ [key: string]: string }>({});
-  const [fonts, setFonts] = useState<{ [key: string]: string }>({});
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-  {/* 1. ダイアログを開いた時 */}
+  useEffect(() => {
+    setImageURL(imageUrl);
+    setStampProps(props);
+    setStampDialogState(state);
+  }
+  , [imageUrl, props, state]);
+
   useEffect(() => {
     const fetchPreview = async () => {
       setIsLoadingPreview(true);
-      setIsLoadingEngravingTypes(true);
-      setIsLoadingFonts(true);
-      setIsLoadingText(true);
-      setIsLoadingImageFile(true);
-      setIsLoadingAdvancedImageFile(true);
       try {
-        const preview = await fetchStampPreview(props);
-        setStampCategory(preview.stamp_category[props.stamp_category]);
-        setStampType(preview.stamp_type[props.stamp_type]);
-        setEngravingType(preview.engraving_type);
-        setFont(preview.font);
-        setText(preview.text);
-        setEngravingTypes(preview.engraving_type_candidates);
-        setFonts(preview.font_candidates);
-      } catch (error) {
+        const preview = await fetchStampPreview(stampProps);
+        const blob = preview.blob;
+        const url = URL.createObjectURL(blob);
+        setImageURL(url);
+        setStampDialogState({
+          ...stampProps,
+          stampCategoryObj: preview.stamp_category,
+          stampTypeObj: preview.stamp_type,
+          engravingTypeObj: preview.engraving_type,
+          fontObj: preview.font,
+          textObj: preview.text,
+          engravingTypesObj: preview.engraving_type_candidates,
+          fontsObj: preview.font_candidates,
+        });
+      } catch (error: any) {
         console.error(error);
       } finally {
-        setIsLoadingEngravingTypes(false);
-        setIsLoadingFonts(false);
+        setIsLoadingPreview(false);
       }
     };
 
     if (open) fetchPreview();
-  }, [open]);
+  }, [stampProps]);
 
-  {/* 2. フォントまたはテキストが変更された時 */}
   useEffect(() => {
-    const fetchPreview = async () => {
-      setIsLoadingPreview(true);
-      setIsLoadingText(true);
-      setIsLoadingImageFile(true);
-      setIsLoadingAdvancedImageFile(true);
-      try {
-        const preview = await fetchStampPreview({
-          ...props, 
-          text_1: Object.values(text)[0] || '',
-          text_2: Object.values(text)[1] || '',
-          text_3: Object.values(text)[2] || '',
-          engraving_type: Object.keys(engravingType)[0] || props.engraving_type,
-          font: Object.keys(font)[0] || props.font,
-        });
-        const blob = preview.blob;
-        const url = URL.createObjectURL(blob);
-        setImageURL(url);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setIsLoadingPreview(false);
-        setIsLoadingText(false);
-        setIsLoadingImageFile(false);
-        setIsLoadingAdvancedImageFile(false);
-      }
-    };
-  
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-    }
-
-    timerRef.current = setTimeout(() => {
-      if (open) fetchPreview();
-    }, 500);
-  
-    return () => {
+    const updateStampText = () => {
       if (timerRef.current) {
         clearTimeout(timerRef.current);
       }
-    };
-  }, [font, Object.values(text).join('')]);
 
-  {/* 3. 印影タイプが変更された時 */}
-  useEffect(() => {
-    const fetchPreview = async () => {
-      setIsLoadingPreview(true);
-      setIsLoadingImageFile(true);
-      setIsLoadingAdvancedImageFile(true);
-      try {
-        const preview = await fetchStampPreview({
-          ...props,
-          text_1: Object.values(text)[0] || '',
-          text_2: Object.values(text)[1] || '',
-          text_3: Object.values(text)[2] || '',
-          engraving_type: Object.keys(engravingType)[0] || props.engraving_type,
-          font: Object.keys(font)[0] || props.font,
-        });
-        const blob = preview.blob;
-        const url = URL.createObjectURL(blob);
-        setImageURL(url);
-        setText(preview.text);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setIsLoadingPreview(false);
-        setIsLoadingText(false);
-        setIsLoadingImageFile(false);
-        setIsLoadingAdvancedImageFile(false);
-      }
-    };
-  
-    if (open) fetchPreview();
-  }
-  , [engravingType]);
-
-  const handleDownload = async (isAdvanced: string) => {
-    if (isAdvanced) {
-      setIsLoadingAdvancedImageFile(true);
-    } else {
-      setIsLoadingImageFile(true);
-    }
-
-    const newProps = {
-      ...props,
-      text_1: Object.values(text)[0] || '',
-      text_2: Object.values(text)[1] || '',
-      text_3: Object.values(text)[2] || '',
-      engraving_type: Object.keys(engravingType)[0] || props.engraving_type,
-      font: Object.keys(font)[0] || props.font,
-      is_advanced: isAdvanced,
+      timerRef.current = setTimeout(() => {
+        setStampProps((prev) => ({
+          ...prev,
+          text: Object.values(stampDialogState.textObj),
+        }));
+      }, 500);
     };
 
-    await createStampDownload(newProps)
-    
-    if (statusDownload == 'error') {
-      alert(errorMessageDownload)
-      return;
-    };
-
-    const a = document.createElement('a');
-    a.download = `${stampCategory}_${stampType}_${new Date().toISOString()}.png`;
-    a.href = imageURL;
-
-    if (isAdvanced == 'true') {
-      try {
-        const preview = await fetchStampPreview(newProps);
-        const blob = preview.blob;
-        a.href = URL.createObjectURL(blob);
-      } catch (error) {
-        console.error(error);
-      }
-    }
-
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    setIsLoadingImageFile(false);
-    setIsLoadingAdvancedImageFile(false);
-  };
-
+    updateStampText();
+  }, [Object.values(stampDialogState.textObj).join('')]);
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth sx={{ width: '100%' }}>
@@ -198,7 +81,10 @@ const StampDialog: React.FC<StampDialogProps> = ({ open, onClose, props }) => {
           <Grid item xs={4.5} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             <div style={{ width: '80%', aspectRatio: '1 / 1', border: '1px solid #ccc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               {isLoadingPreview ? (
-                <Typography variant="body2">Loading...</Typography>
+                <Loading
+                  width={100}
+                  height={100}
+                />
               ) : (
                 <img src={imageURL} alt="stamp" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
               )}
@@ -211,114 +97,97 @@ const StampDialog: React.FC<StampDialogProps> = ({ open, onClose, props }) => {
               <Typography variant="subtitle1" gutterBottom
                 sx={{ marginTop: 2 }}
               >印影タイプ選択</Typography>
-              {isLoadingEngravingTypes ? (
-                <Loading
-                  width={240}
-                  height={45}
-                />
-              ) : (
-                <ToggleButtonGroup
-                  value={Object.values(engravingType)[0] || ''}
-                  exclusive
-                  onChange={(e, newValue) => {
-                    if (newValue !== null) {
-                      const newKey = Object.keys(engravingTypes).find(key => engravingTypes[key] === newValue);
-                      setEngravingType({ [newKey || '']: newValue });
-                    }
-                  }}
-                  aria-label="engraving type"
-                  sx={{ height: 45 }}
-                >
-                  {Object.entries(engravingTypes).map(([key, value]) => (
-                    <ToggleButton key={key} value={value}>{value}</ToggleButton>
-                  ))}
-                </ToggleButtonGroup>
-              )}
+              <ToggleButtonGroup
+                value={Object.values(stampDialogState.engravingTypeObj)[0] || ''}
+                exclusive
+                onChange={(e, newValue) => {
+                  if (newValue !== null) {
+                    setStampProps({
+                      ...stampProps,
+                      engraving_type: Object.keys(stampDialogState.engravingTypesObj).find(key => stampDialogState.engravingTypesObj[key] === newValue) || '',
+                    })
+                  }
+                }}
+                aria-label="engraving type"
+                sx={{ height: 45 }}
+              >
+                {Object.entries(stampDialogState.engravingTypesObj).map(([key, value]) => (
+                  <ToggleButton key={key} value={value}>{value}</ToggleButton>
+                ))}
+              </ToggleButtonGroup>
 
               <Typography variant="subtitle1" gutterBottom
                 sx={{ marginTop: 2 }}
               >書体選択</Typography>
-              {isLoadingFonts ? (
-                <Loading
-                  width={240}
-                  height={95}
-                />
-              ) : (
-                <ToggleButtonGroup
-                  value={Object.values(font)[0] || ''}
-                  exclusive
-                  onChange={(e, newValue) => {
-                    if (newValue !== null) {
-                      const newKey = Object.keys(fonts).find(key => fonts[key] === newValue);
-                      setFont({ [newKey || '']: newValue });
-                    }
-                  }}
-                  sx={{ height: 95 }}
-                  aria-label="font type"
-                >
-                  {Object.entries(fonts).map(([key, value]) => (
-                    <ToggleButton key={key} value={value}>{value}</ToggleButton>
-                  ))}
-                </ToggleButtonGroup>
-              )}
+              <ToggleButtonGroup
+                value={Object.values(stampDialogState.fontObj)[0] || ''}
+                exclusive
+                onChange={(e, newValue) => {
+                  if (newValue !== null) {
+                    setStampProps({
+                      ...stampProps,
+                      font: Object.keys(stampDialogState.fontsObj).find(key => stampDialogState.fontsObj[key] === newValue) || '',
+                    });
+                  }
+                }}
+                sx={{ height: 95 }}
+                aria-label="font type"
+              >
+                {Object.entries(stampDialogState.fontsObj).map(([key, value]) => (
+                  <ToggleButton key={key} value={value}>{value}</ToggleButton>
+                ))}
+              </ToggleButtonGroup>
               
               <Typography variant="subtitle1" gutterBottom
                 sx={{ marginTop: 2, marginBottom: 1 }}
               >印影文字</Typography>
-              {isLoadingText ? (
-                <Loading
-                  width={240}
-                  height={45}
-                />  
-              ) : (
-                <Grid container spacing={1} sx={{ height: 45 }}>
-                  {Object.entries(text).map(([key, value]) => (
-                    <Grid item xs={4} key={key}>
-                      <TextField
-                        label={key}
-                        value={value}
-                        onChange={(e) => setText({ ...text, [key]: e.target.value })}
-                        fullWidth
-                      />
-                    </Grid>
-                  ))}
-                </Grid>
-              )}
+              <Grid container spacing={1} sx={{ height: 45 }}>
+                {Object.entries(stampDialogState.textObj).map(([key, value]) => (
+                  <Grid item xs={4} key={key}>
+                    <TextField
+                      label={key}
+                      placeholder="文字を入力"
+                      value={value}
+                      onChange={(e) => {
+                        const newValue = e.target.value;
+
+                        setStampDialogState((prev) => ({
+                          ...prev,
+                          textObj: { ...prev.textObj, [key]: newValue },
+                        }));
+                      }}
+                      fullWidth
+                    />
+                  </Grid>
+                ))}
+              </Grid>
             </div>
           </Grid>
         </Grid>
       </DialogContent>
       <DialogActions>
-        <Button 
-          sx={{ marginRight: 2, width: 210, height: 45 }}
-          variant="contained"
-          color="inherit"
-          onClick={() => handleDownload('false')}
-        >
-          {isLoadingImageFile ? (
-            <Loading
-              width={210}
-              height={45}
-            />
-          ) : (
-            <Typography>白背景でダウンロード</Typography>
-          )}
-        </Button>
-        <Button
-          sx={{ marginRight: 2, width: 210, height: 45 }}
-          variant="contained"
-          color="inherit"
-          onClick={() => handleDownload('true')}
-        >
-          {isLoadingAdvancedImageFile ? (
-            <Loading
-              width={210}
-              height={45}
-            />
-          ) : (
-            <Typography>透過背景でダウンロード</Typography>
-          )}
-        </Button>
+        <StampDownloadButton
+          width={210}
+          height={45}
+          buttonText="白背景でダウンロード"
+          {
+            ...{
+              ...stampProps,
+              is_advanced: 'false',
+            }
+          }
+        />
+        <StampDownloadButton
+          width={210}
+          height={45}
+          buttonText="透過背景でダウンロード"
+          {
+            ...{
+              ...stampProps,
+              is_advanced: 'true',
+            }
+          }
+        />
       </DialogActions>
     </Dialog>
   );

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardMedia, Typography, Box, Button, CardActions } from '@mui/material';
 import { StampProps } from '../types/Stamp';
+import { StampDialogState } from '../types/StampDialog';
 import { useStampPreview } from '../hooks/useStampPreview';
 import Loading from './Loading';
 import StampDialog from './StampDialog';
@@ -10,6 +11,16 @@ const StampCard: React.FC<StampProps> = (props) => {
   const [imageURL, setImageURL] = useState<string>('');
   const [stampCategory, setStampCategory] = useState<string>('');
   const [stampType, setStampType] = useState<string>('');
+  const [stampDialogState, setStampDialogState] = useState<StampDialogState>({
+    ...props,
+    stampCategoryObj: {},
+    stampTypeObj: {},
+    engravingTypeObj: {},
+    fontObj: {},
+    textObj: {},
+    engravingTypesObj: {},
+    fontsObj: {},
+  });
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [open, setOpen] = useState<boolean>(false);
 
@@ -23,6 +34,16 @@ const StampCard: React.FC<StampProps> = (props) => {
         setImageURL(url);
         setStampCategory(preview.stamp_category[props.stamp_category]);
         setStampType(preview.stamp_type[props.stamp_type]);
+        setStampDialogState({
+          ...props,
+          stampCategoryObj: preview.stamp_category,
+          stampTypeObj: preview.stamp_type,
+          engravingTypeObj: preview.engraving_type,
+          fontObj: preview.font,
+          textObj: preview.text,
+          engravingTypesObj: preview.engraving_type_candidates,
+          fontsObj: preview.font_candidates,
+        });
       } catch (error) {
         console.error(error);
       } finally {
@@ -83,6 +104,8 @@ const StampCard: React.FC<StampProps> = (props) => {
       open={open}
       onClose={closeDialog}
       props={props}
+      state={stampDialogState}
+      imageUrl={imageURL}
     ></StampDialog>
     </div>
   );
