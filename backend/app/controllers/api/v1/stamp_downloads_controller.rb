@@ -1,15 +1,18 @@
 class Api::V1::StampDownloadsController < ApplicationController
+  before_action :check_advanced_access, only: %i[create]
+
   def create
     stamp_download = StampDownload.new(stamp_download_params)
+    stamp_download.user = current_user
 
-    if stamp_download.save
-      render json: {
-        errors: nil,
-      }, status: :created
+    if stamp_download.valid?
+      if stamp_download.save
+        render json: { errors: nil }, status: :created
+      else
+        render json: { errors: stamp_download.errors.full_messages }, status: :unprocessable_entity
+      end
     else
-      render json: {
-        errors: stamp_download.errors.full_messages,
-      }, status: :unprocessable_entity
+      render json: { errors: stamp_download.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
@@ -29,5 +32,15 @@ class Api::V1::StampDownloadsController < ApplicationController
     ).tap do |p|
       p[:is_advanced] = p[:is_advanced] == 'true'
     end
+  end
+
+  def stamp_download
+    @stamp_download ||= StampDownload.new
+    @stamp_download.assign_attributes(stamp_download_params)
+    @stamp_download
+  end
+
+  def check_advanced_access
+    render json: { errors: ['You are not signed in'] }, status: :unauthorized if stamp_download.advanced? && !current_user
   end
 end

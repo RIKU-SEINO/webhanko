@@ -18,12 +18,35 @@ RSpec.describe "Stamps", type: :request do
     context 'advanced stamp' do
       let(:stamp) { FactoryBot.build(:stamp, :advanced) }
 
-      it 'returns PNG image' do
-        get api_v1_stamps_preview_path(stamp.attributes)
+      context 'not signed in' do
+        before do
+          allow_any_instance_of(Api::V1::StampsController).to receive(:current_user).and_return(nil)
+        end
 
-        aggregate_failures do
-          expect(response).to have_http_status(:ok)
-          expect(response.content_type).to eq('image/png')
+        it 'returns unauthorized' do
+          get api_v1_stamps_preview_path(stamp.attributes)
+
+          aggregate_failures do
+            expect(response).to have_http_status(:unauthorized)
+            expect(response.content_type).to eq('application/json; charset=utf-8')
+          end
+        end
+      end
+
+      context 'signed in' do
+        let(:user) { FactoryBot.create(:user) }
+
+        before do
+          allow_any_instance_of(Api::V1::StampsController).to receive(:current_user).and_return(user)
+        end
+
+        it 'returns PNG image' do
+          get api_v1_stamps_preview_path(stamp.attributes)
+
+          aggregate_failures do
+            expect(response).to have_http_status(:ok)
+            expect(response.content_type).to eq('image/png')
+          end
         end
       end
     end

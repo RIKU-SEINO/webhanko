@@ -1,6 +1,6 @@
 class Api::V1::StampsController < ApplicationController
-  before_action :build_stamp, only: %i[preview metadata]
   before_action :validate_stamp, only: %i[preview metadata]
+  before_action :check_advanced_access, only: %i[preview]
 
   def preview
     image = build_stamp_image(stamp)
@@ -30,13 +30,9 @@ class Api::V1::StampsController < ApplicationController
   end
 
   def stamp
-    stamp = @stamp || Stamp.new
-    stamp.assign_attributes(stamp_params)
-    stamp
-  end
-
-  def build_stamp
-    @stamp = Stamp.new(stamp_params)
+    @stamp ||= Stamp.new
+    @stamp.assign_attributes(stamp_params)
+    @stamp
   end
 
   def validate_stamp
@@ -45,5 +41,9 @@ class Api::V1::StampsController < ApplicationController
 
   def build_stamp_image(stamp)
     stamp.advanced? ? stamp.build_image_advanced : stamp.build_image
+  end
+
+  def check_advanced_access
+    render json: { errors: ['You are not signed in'] }, status: :unauthorized if stamp.advanced? && !current_user
   end
 end
