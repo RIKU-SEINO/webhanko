@@ -34,9 +34,18 @@ RSpec.describe User, type: :model do
       expect(user).to_not be_valid
     end
 
-    it 'is not valid when is_admin is not included in [true, false]' do
+    it 'is not valid without a is_admin' do
       user.is_admin = nil
       expect(user).to_not be_valid
+    end
+
+    it 'is valid with is_admin is not included in [true, false]' do
+      user.is_admin = 'invalid'
+      user.save
+      aggregate_failures do
+        expect(user).to be_valid
+        expect(user.reload.is_admin).to be true
+      end
     end
 
     it 'does not increase the number of users when user is invalid' do

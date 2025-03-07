@@ -35,9 +35,9 @@ gem "thruster", require: false
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin Ajax possible
 gem "rack-cors"
 
-# Use devise and devise-jwt for authentication
+# Use devise and devise_token_auth for authentication
 gem "devise"
-gem "devise-jwt"
+gem "devise_token_auth"
 
 # Use MiniMagick for image processing
 gem "mini_magick"
