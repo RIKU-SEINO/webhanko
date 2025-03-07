@@ -1,6 +1,6 @@
 class Api::V1::Auth::SessionsController < ApplicationController
   def index
-    if current_api_v1_user
+    if current_user
       render json: {
         is_login: true,
         user: current_api_v1_user,
