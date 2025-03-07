@@ -3,6 +3,7 @@ FactoryBot.define do
     email { Faker::Internet.email }
     password { Faker::Internet.password }
     is_admin { false }
+    uid { Faker::Internet.uuid }
 
     trait :admin do
       is_admin { true }
