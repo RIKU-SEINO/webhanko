@@ -10,10 +10,6 @@ class User < ActiveRecord::Base
   validates :email, presence: true, uniqueness: true
   validates :encrypted_password, presence: true
   validates :is_admin, inclusion: { in: [true, false] }
-  validates :provider, presence: true
-  validates :uid, presence: true, uniqueness: { scope: :provider }
-  validates :confirmation_token, uniqueness: true
-  validates :reset_password_token, uniqueness: true
 
   def admin?
     is_admin

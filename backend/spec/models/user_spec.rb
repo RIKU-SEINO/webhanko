@@ -48,44 +48,6 @@ RSpec.describe User, type: :model do
       end
     end
 
-    it 'is not valid without a provider' do
-      user.provider = nil
-      expect(user).to_not be_valid
-    end
-
-    it 'is not valid without a uid' do
-      user.uid = nil
-      expect(user).to_not be_valid
-    end
-
-    it 'is not valid with a duplicated uid and provider' do
-      user.save
-      user_with_duplicated_uid_and_provider = FactoryBot.build(
-        :user,
-        uid: user.uid,
-        provider: user.provider
-      )
-      expect(user_with_duplicated_uid_and_provider).to_not be_valid
-    end
-
-    it 'is not valid with a duplicated confirmation_token' do
-      user.save
-      user_with_duplicated_confirmation_token = FactoryBot.build(
-        :user,
-        confirmation_token: user.confirmation_token
-      )
-      expect(user_with_duplicated_confirmation_token).to_not be_valid
-    end
-
-    it 'is not valid with a duplicated reset_password_token' do
-      user.save
-      user_with_duplicated_reset_password_token = FactoryBot.build(
-        :user,
-        reset_password_token: user.reset_password_token
-      )
-      expect(user_with_duplicated_reset_password_token).to_not be_valid
-    end
-
     it 'does not increase the number of users when user is invalid' do
       user.password = ''
       expect { user.save }.to_not change { User.count }
