@@ -3,13 +3,13 @@ class Api::V1::Auth::SessionsController < ApplicationController
     if current_user
       render json: {
         is_login: true,
-        user: current_api_v1_user,
-      }, status: :ok
+        user: current_user,
+      }
     else
       render json: {
         is_login: false,
-        message: 'ユーザーが存在しません',
-      }, status: :unauthorized
+        message: 'No user logged in',
+      }
     end
   end
 
