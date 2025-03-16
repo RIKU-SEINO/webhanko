@@ -2,7 +2,6 @@ class Api::V1::StampDownloadsController < ApplicationController
   before_action :check_advanced_access, only: %i[create]
 
   def create
-    stamp_download = StampDownload.new(stamp_download_params)
     stamp_download.user = current_user
 
     if stamp_download.valid?
@@ -41,6 +40,6 @@ class Api::V1::StampDownloadsController < ApplicationController
   end
 
   def check_advanced_access
-    render json: { errors: ['You are not signed in'] }, status: :unauthorized if stamp_download.advanced? && !current_user
+    render json: { errors: ['この機能を利用するためにはログインが必要です'] } if stamp_download.advanced? && !current_user
   end
 end
