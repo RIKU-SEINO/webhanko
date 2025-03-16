@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { apiClient } from "../lib/apiClient";
 import { ExecuteStampDownloadProps, ExecuteStampDownloadStatus } from "../types/StampDownload";
 import { useStampPreview } from '../hooks/useStampPreview';
 

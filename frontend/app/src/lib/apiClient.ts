@@ -7,7 +7,7 @@ const headers = {
 };
 
 // initial setup for axios
-export const apiClient = axios.create({ baseURL, headers });
+export const apiClient = axios.create({ baseURL, headers, withCredentials: true });
 
 // response interceptor (error handling)
 apiClient.interceptors.response.use(

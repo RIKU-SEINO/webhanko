@@ -1,13 +1,20 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
+import { PrivateUser } from './AccessControl';
+import { AuthContext } from '../App';
 
 const ProfilePage: React.FC = () => {
+  const { currentUser } = useContext(AuthContext);
   return (
-    <div>
-      <h1>Profile Page</h1>
-      <div>
-        プロフィール
-      </div>
-    </div>
+    <>
+      <PrivateUser>
+        <h1>Profile Page</h1>
+        <div>
+          <p>メールアドレス: {currentUser?.email}</p>
+        </div>
+      </PrivateUser>
+    </>
   );
 };
 

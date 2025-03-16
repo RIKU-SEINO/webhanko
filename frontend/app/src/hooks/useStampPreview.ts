@@ -1,3 +1,4 @@
+import { useContext } from 'react';
 import { apiClient } from '../lib/apiClient';
 import { StampPreviewRequest,
           StampPreviewResponse,
@@ -6,8 +7,12 @@ import { StampPreviewRequest,
           StampPreview,
 } from '../types/StampPreview';
 import { StampProps } from '../types/Stamp';
+import { useCookies } from "react-cookie";
+import { FlashMessageContext } from '../App';
 
 export const useStampPreview = () => {
+  const [cookies] = useCookies(['_access_token', '_client', '_uid']);
+  const { setFlashMessageError } = useContext(FlashMessageContext);
   const fetchStampPreview = async (props: StampProps): Promise<StampPreview> => {
 
     const stampPreviewPayload: StampMetadataRequest = {
@@ -28,11 +33,21 @@ export const useStampPreview = () => {
       const responseImage = await apiClient.get<StampPreviewResponse>('/stamps/preview', {
         params: stampPreviewPayload,
         responseType: 'blob',
+        headers: {
+          "access-token": cookies._access_token,
+          "client": cookies._client,
+          "uid": cookies._uid,
+        },
       });
 
       const responseMetadata = await apiClient.get<StampMetadataResponse>('/stamps/metadata', {
         params: stampMetadataPayload,
         responseType: 'json',
+        headers: {
+          "access-token": cookies._access_token,
+          "client": cookies._client,
+          "uid": cookies._uid,
+        },
       });
 
       return {
