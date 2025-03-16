@@ -46,23 +46,19 @@ const HomePage: React.FC = () => {
   
 
   return (
-    <div>
-      <Header />
-      <Container sx={{ py: 4 }}>
-        <Typography variant="h3" align="center" gutterBottom>
-          無料で簡単に電子印鑑画像を作成
-        </Typography>
-        <Typography variant="body2" align="center" paragraph>
-          実印、認印、シャチハタ印、代表者印など多様な印鑑を無料で作成できるサイトです。
-          印影文字のフォントや彫刻方向、印影のバランスなど自由にカスタマイズできます。
-        </Typography>
+    <>
+      <Typography variant="h3" align="center" gutterBottom>
+        無料で簡単に電子印鑑画像を作成
+      </Typography>
+      <Typography variant="body2" align="center" paragraph>
+        実印、認印、シャチハタ印、代表者印など多様な印鑑を無料で作成できるサイトです。
+        印影文字のフォントや彫刻方向、印影のバランスなど自由にカスタマイズできます。
+      </Typography>
 
-        <Box sx={{ my: 4, display: 'flex', flexDirection: 'column', alignItems: 'center', marginLeft: '50px' }}>
-          {stampCategories.map(({ title, data }) => renderStampSection(title, data))}
-        </Box>
-      </Container>
-      <Footer />
-    </div>
+      <Box sx={{ my: 4, display: 'flex', flexDirection: 'column', alignItems: 'center', marginLeft: '50px' }}>
+        {stampCategories.map(({ title, data }) => renderStampSection(title, data))}
+      </Box>
+    </>
   );
 };
 

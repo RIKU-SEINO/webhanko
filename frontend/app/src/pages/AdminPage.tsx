@@ -1,25 +1,19 @@
-import React from 'react';
-import { useListUsers } from '../hooks/useListUsers';
+import React, { useContext } from 'react';
+import { PrivateUser } from './AccessControl';
+import { AuthContext } from '../App';
 
 const AdminPage: React.FC = () => {
-  const  { users, errorMessage, fetchUsers } = useListUsers();
-
+  const { currentUser } = useContext(AuthContext);
   return (
-    <div>
-      <h1>Admin Page</h1>
-      <div>
-        管理者ページ
-      </div>
-      <div>
-        <button onClick={fetchUsers}>ユーザー一覧を取得</button>
-        <ul>
-          {users.map((user) => (
-            <li key={user.id}>{user.email}</li>
-          ))}
-        </ul>
-        {errorMessage && <p>{errorMessage}</p>}
-      </div>
-    </div>
+    <>
+      <PrivateUser>
+        <h1>Admin Page</h1>
+        <div>
+          <p>管理者ページ</p>
+          <p>メールアドレス: {currentUser?.email}</p>
+        </div>
+      </PrivateUser>
+    </>
   );
 };
 
